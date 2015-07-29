@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use vendor\amirasaran\zarinpal\models\Payment;
 
 /* @var $this yii\web\View */
 /* @var $searchModel vendor\amirasaran\zarinpal\models\PaymentSearch */
@@ -28,7 +29,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'authority',
             'amount',
-            'status',
+            [
+                'attribute'=>'status',
+                'format'=>'raw',
+                'value'=> function ($model){
+                    if($model->status === Payment::STATUS_CANCELED)
+                        $status = "<span class='glyphicon-erase glyphicon text-danger'><b> Canceled</b></span>";
+                    elseif ($model->status == Payment::STATUS_WAITING)
+                        $status = "<span class='glyphicon-warning-sign glyphicon text-info'><b> Waiting to Complete</b></span>";
+                    elseif ($model->status == Payment::STATUS_SUCCESS)
+                        $status = "<span class='glyphicon-ok glyphicon text-success '><b> Completed</b></span>";
+                    else
+                        $status = "Not Set";
+                    return $status;
+                }
+            ],
             'refid',
              'description',
              'ip',
