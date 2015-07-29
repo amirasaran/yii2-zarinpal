@@ -2,11 +2,10 @@
 
 namespace vendor\amirasaran\zarinpal\models;
 
-require_once('nusoap.php');
 
-use vendor\amirasaran\zarinpal\Zarinpal;
 use Yii;
 use yii\helpers\Url;
+use SoapClient;
 
 /**
  * This is the model class for table "payment".
@@ -40,11 +39,10 @@ class Payment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['authority', 'amount', 'status', 'refid', 'description', 'ip'], 'required'],
-            [['amount', 'status',  'ip'], 'integer'],
+            [['authority', 'amount', 'status', 'description', 'ip'], 'required'],
+            [['amount', 'status'], 'integer'],
             [['authority'], 'string', 'max' => 36],
             [['description'], 'string'],
-            [['refid'], 'string', 'max' => 50]
         ];
     }
 
@@ -68,25 +66,37 @@ class Payment extends \yii\db\ActiveRecord
     /*
      * Check Payment Status
      */
-    public function checkAuthority(){
+    public function checkAuthority($module){
+        $params =
+            [
+                'MerchantID' 	=> $module->module->merchant_id,
+                'Authority' 		=> $this->authority,
+                'Amount' 	=> $this->amount,
+            ];
 
+        $client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
+        $result = $client->PaymentVerification($params);
+
+        if($result->Status == 100){
+            $this->status = self::STATUS_SUCCESS;
+            $this->refid = $result->RefID;
+        } else {
+            $this->status = self::STATUS_CANCELED;
+        }
+
+        return ($result->Status == 100) ? true : $result->Status;
     }
 
     public function createPayment($module){
-
-        $zarinPal = new Zarinpal('zarinpal');
         $params =
             [
                 'MerchantID' 	=> $module->module->merchant_id,
                 'Amount' 		=> $this->amount,
                 'Description' 	=> $this->description,
-//                'Email' 		=> $Email,
-//                'Mobile' 		=> $Mobile,
                 'CallbackURL' 	=> Url::to($module->module->calback_url),
             ];
-        $client = new nusoap_client('https://de.zarinpal.com/pg/services/WebGate/wsdl', 'wsdl');
-        $client->soap_defencoding = 'UTF-8';
-        $result = $client->call('PaymentRequest',[$params]);
+        $client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', array('encoding' => 'UTF-8'));
+        $result = $client->__call('PaymentRequest',[$params]);
 
         return $result;
     }

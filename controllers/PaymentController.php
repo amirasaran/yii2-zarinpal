@@ -2,9 +2,11 @@
 
 namespace vendor\amirasaran\zarinpal\controllers;
 
+use GuzzleHttp\Exception\BadResponseException;
 use Yii;
 use vendor\amirasaran\zarinpal\models\Payment;
 use vendor\amirasaran\zarinpal\models\PaymentSearch;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -66,8 +68,13 @@ class PaymentController extends Controller
             $model->ip = $_SERVER["REMOTE_ADDR"];
             $model->status = Payment::STATUS_WAITING;
             $res = $model->createPayment($this);
-            var_dump($res);exit;
-            return $this->redirect(['view', 'id' => $model->id]);
+            if($res->Status == 100){
+                $model->authority = $res->Authority;
+                $model->save();
+                return $this->render('waiting',['model'=>$model]);
+            }else{
+                throw new BadRequestHttpException('Can Not Connect To Zarinpal Bad Request !');
+            }
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -81,34 +88,33 @@ class PaymentController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionPay($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(['id'=>$id,'status'=>Payment::STATUS_WAITING]);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        $res = $model->createPayment($this);
+
+        if($res->Status == 100){
+            $model->authority = $res->Authority;
+            $model->save();
+            return $this->render('waiting',['model'=>$model]);
+        }else{
+            throw new BadRequestHttpException('Can Not Connect To Zarinpal Bad Request !');
         }
     }
 
-    /**
-     * Deletes an existing Payment model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
-    }
+    public function actionVerify($Authority,$Status){
 
+        $model = $this->findModel(['authority'=>$Authority,'status'=>Payment::STATUS_WAITING]);
 
-    public function actionCallback($Authority){
+            if($Status == "OK" || $Status == "NOK") {
+                $model->checkAuthority($this);
+                $model->save();
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
+        return $this->redirect(['view', 'id' => $model->id]);
 
     }
 
