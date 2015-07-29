@@ -1,0 +1,21 @@
+{
+    "name": "zarinpal/zarinpal",
+    "description": "Online Payment Extension For Zarinpal",
+    "type": "yii2-extension",
+    "keywords": ["zarinpal","online","payment","iran","persian"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Amir Mohsen Asaran",
+            "email": "admin@mihanmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "amirasaran\\zarinpal\\": ""
+        }
+    }
+}
