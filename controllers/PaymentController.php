@@ -2,7 +2,6 @@
 
 namespace vendor\amirasaran\zarinpal\controllers;
 
-use GuzzleHttp\Exception\BadResponseException;
 use Yii;
 use vendor\amirasaran\zarinpal\models\Payment;
 use vendor\amirasaran\zarinpal\models\PaymentSearch;
