@@ -2,10 +2,8 @@
 
 namespace vendor\amirasaran\zarinpal\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use vendor\amirasaran\zarinpal\models\Payment;
 
 /**
  * PaymentSearch represents the model behind the search form about `vendor\amirasaran\zarinpal\models\Payment`.
@@ -13,7 +11,7 @@ use vendor\amirasaran\zarinpal\models\Payment;
 class PaymentSearch extends Payment
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -24,7 +22,7 @@ class PaymentSearch extends Payment
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -33,7 +31,7 @@ class PaymentSearch extends Payment
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Creates data provider instance with search query applied.
      *
      * @param array $params
      *
@@ -56,11 +54,11 @@ class PaymentSearch extends Payment
         }
 
         $query->andFilterWhere([
-            'id' => $this->id,
-            'amount' => $this->amount,
-            'status' => $this->status,
+            'id'          => $this->id,
+            'amount'      => $this->amount,
+            'status'      => $this->status,
             'description' => $this->description,
-            'ip' => $this->ip,
+            'ip'          => $this->ip,
         ]);
 
         $query->andFilterWhere(['like', 'authority', $this->authority])
