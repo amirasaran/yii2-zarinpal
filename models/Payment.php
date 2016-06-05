@@ -72,7 +72,7 @@ class Payment extends \yii\db\ActiveRecord
                 'Amount'           => $this->amount,
             ];
 
-        $client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentVerification($params);
 
         if ($result->Status == 100) {
@@ -94,8 +94,8 @@ class Payment extends \yii\db\ActiveRecord
                 'Description'    => $this->description,
                 'CallbackURL'    => Url::to($module->module->calback_url),
             ];
-        $client = new SoapClient('https://de.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
-        $result = $client->__call('PaymentRequest', [$params]);
+        $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        $result = $client->PaymentRequest($params);
 
         return $result;
     }
