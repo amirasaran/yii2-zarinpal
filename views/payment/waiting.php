@@ -1,13 +1,12 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model vendor\amirasaran\zarinpal\models\Payment */
 
 $this->title = $model->amount;
-$this->registerMetaTag(['http-equiv'=>'refresh','content'=>'2;URL=https://www.zarinpal.com/pg/StartPay/'.$model->authority]);
+$this->registerMetaTag(['http-equiv' => 'refresh', 'content' => '2;URL=https://www.zarinpal.com/pg/StartPay/'.$model->authority]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Payments'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

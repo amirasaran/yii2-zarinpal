@@ -1,8 +1,8 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
 use vendor\amirasaran\zarinpal\models\Payment;
+use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $searchModel vendor\amirasaran\zarinpal\models\PaymentSearch */
@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="payment-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
     <p>
         <?= Html::a(Yii::t('app', 'Create Payment'), ['create'], ['class' => 'btn btn-success']) ?>
@@ -22,35 +22,37 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
+        'filterModel'  => $searchModel,
+        'columns'      => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
             'authority',
             'amount',
             [
-                'attribute'=>'status',
-                'format'=>'raw',
-                'value'=> function ($model){
-                    if($model->status === Payment::STATUS_CANCELED)
+                'attribute' => 'status',
+                'format'    => 'raw',
+                'value'     => function ($model) {
+                    if ($model->status === Payment::STATUS_CANCELED) {
                         $status = "<span class='glyphicon-erase glyphicon text-danger'><b> Canceled</b></span>";
-                    elseif ($model->status == Payment::STATUS_WAITING)
+                    } elseif ($model->status == Payment::STATUS_WAITING) {
                         $status = "<span class='glyphicon-warning-sign glyphicon text-info'><b> Waiting to Complete</b></span>";
-                    elseif ($model->status == Payment::STATUS_SUCCESS)
+                    } elseif ($model->status == Payment::STATUS_SUCCESS) {
                         $status = "<span class='glyphicon-ok glyphicon text-success '><b> Completed</b></span>";
-                    else
-                        $status = "Not Set";
+                    } else {
+                        $status = 'Not Set';
+                    }
+
                     return $status;
-                }
+                },
             ],
             'refid',
              'description',
              'ip',
 
             [
-                'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view}'
+                'class'    => 'yii\grid\ActionColumn',
+                'template' => '{view}',
             ],
         ],
     ]); ?>

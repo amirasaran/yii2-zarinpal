@@ -2,13 +2,13 @@
 
 namespace vendor\amirasaran\zarinpal\controllers;
 
-use Yii;
 use vendor\amirasaran\zarinpal\models\Payment;
 use vendor\amirasaran\zarinpal\models\PaymentSearch;
+use Yii;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * PaymentController implements the CRUD actions for Payment model.
@@ -19,7 +19,7 @@ class PaymentController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
                 ],
@@ -29,6 +29,7 @@ class PaymentController extends Controller
 
     /**
      * Lists all Payment models.
+     *
      * @return mixed
      */
     public function actionIndex()
@@ -37,14 +38,16 @@ class PaymentController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
      * Displays a single Payment model.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionView($id)
@@ -57,6 +60,7 @@ class PaymentController extends Controller
     /**
      * Creates a new Payment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
@@ -64,14 +68,15 @@ class PaymentController extends Controller
         $model = new Payment();
 
         if ($model->load(Yii::$app->request->post())) {
-            $model->ip = $_SERVER["REMOTE_ADDR"];
+            $model->ip = $_SERVER['REMOTE_ADDR'];
             $model->status = Payment::STATUS_WAITING;
             $res = $model->createPayment($this);
-            if($res->Status == 100){
+            if ($res->Status == 100) {
                 $model->authority = $res->Authority;
                 $model->save();
-                return $this->render('waiting',['model'=>$model]);
-            }else{
+
+                return $this->render('waiting', ['model' => $model]);
+            } else {
                 throw new BadRequestHttpException('Can Not Connect To Zarinpal Bad Request !');
             }
         } else {
@@ -84,45 +89,50 @@ class PaymentController extends Controller
     /**
      * Updates an existing Payment model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param int $id
+     *
      * @return mixed
      */
     public function actionPay($id)
     {
-        $model = $this->findModel(['id'=>$id,'status'=>Payment::STATUS_WAITING]);
+        $model = $this->findModel(['id' => $id, 'status' => Payment::STATUS_WAITING]);
 
         $res = $model->createPayment($this);
 
-        if($res->Status == 100){
+        if ($res->Status == 100) {
             $model->authority = $res->Authority;
             $model->save();
-            return $this->render('waiting',['model'=>$model]);
-        }else{
+
+            return $this->render('waiting', ['model' => $model]);
+        } else {
             throw new BadRequestHttpException('Can Not Connect To Zarinpal Bad Request !');
         }
     }
 
+    public function actionVerify($Authority, $Status)
+    {
+        $model = $this->findModel(['authority' => $Authority, 'status' => Payment::STATUS_WAITING]);
 
-    public function actionVerify($Authority,$Status){
+        if ($Status == 'OK' || $Status == 'NOK') {
+            $model->checkAuthority($this);
+            $model->save();
 
-        $model = $this->findModel(['authority'=>$Authority,'status'=>Payment::STATUS_WAITING]);
-
-            if($Status == "OK" || $Status == "NOK") {
-                $model->checkAuthority($this);
-                $model->save();
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
 
         return $this->redirect(['view', 'id' => $model->id]);
-
     }
 
     /**
      * Finds the Payment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Payment the loaded model
+     *
+     * @param int $id
+     *
      * @throws NotFoundHttpException if the model cannot be found
+     *
+     * @return Payment the loaded model
      */
     protected function findModel($id)
     {
