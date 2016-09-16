@@ -1,6 +1,6 @@
 {
     "name": "amirasaran/zarinpal",
-    "description": "Online Payment Extension For Zarinpal",
+    "description": "Online Zarinpal Payment Extension For Yii2",
     "type": "yii2-extension",
     "keywords": ["zarinpal","online","payment","iran","persian"],
     "license": "GPL-3.0+",
@@ -17,5 +17,11 @@
         "psr-4": {
             "amirasaran\\zarinpal\\": ""
         }
-    }
+    },
+    "repositories":[
+        {
+            "type": "git",
+            "url": "git@github.com:amirasaran/yii2-zarinpal.git"
+        }
+    ]
 }
