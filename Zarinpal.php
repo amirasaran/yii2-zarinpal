@@ -18,11 +18,11 @@ class Zarinpal extends Model
         $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         $result = $client->PaymentRequest(
             [
-                'MerchantID' => $this->merchant_id,
-                'Amount' => $amount,
+                'MerchantID'  => $this->merchant_id,
+                'Amount'      => $amount,
                 'Description' => $description,
-                'Email' => $email,
-                'Mobile' => $mobile,
+                'Email'       => $email,
+                'Mobile'      => $mobile,
                 'CallbackURL' => $this->callback_url,
             ]
         );
@@ -40,13 +40,14 @@ class Zarinpal extends Model
         $result = $client->PaymentVerification(
             [
                 'MerchantID' => $this->merchant_id,
-                'Authority' => $this->_authority,
-                'Amount' => $amount,
+                'Authority'  => $this->_authority,
+                'Amount'     => $amount,
             ]
         );
 
         $this->_status = $result->Status;
         $this->_ref_id = $result->RefID;
+
         return $this;
     }
 
@@ -57,8 +58,9 @@ class Zarinpal extends Model
 
     public function getRedirectUrl($zaringate = true)
     {
-        $url = 'https://www.zarinpal.com/pg/StartPay/' . $this->_authority;
+        $url = 'https://www.zarinpal.com/pg/StartPay/'.$this->_authority;
         $url .=  ($zaringate) ? '/ZarinGate' : '';
+
         return $url;
     }
 
