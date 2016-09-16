@@ -8,7 +8,7 @@ The preferred way to install this extension is through composer.
 
 Either run
 ```
-php composer.phar require amirasaran/zarinpal:*
+php composer.phar require amirasaran/zarinpal:"*"
 ```
 or add
 ```
