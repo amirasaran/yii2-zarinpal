@@ -9,13 +9,18 @@ class Zarinpal extends Model
 {
     public $merchant_id;
     public $callback_url;
+    public $testing = false;
     private $_status;
     private $_authority;
     private $_ref_id;
 
     public function request($amount, $description, $email = null, $mobile = null)
     {
-        $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        if($this->testing){
+            $client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        }else{
+            $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        }
         $result = $client->PaymentRequest(
             [
                 'MerchantID'  => $this->merchant_id,
@@ -36,7 +41,11 @@ class Zarinpal extends Model
     public function verify($authority, $amount)
     {
         $this->_authority = $authority;
-        $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        if($this->testing){
+            $client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        }else{
+            $client = new SoapClient('https://www.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
+        }
         $result = $client->PaymentVerification(
             [
                 'MerchantID' => $this->merchant_id,
@@ -58,7 +67,11 @@ class Zarinpal extends Model
 
     public function getRedirectUrl($zaringate = true)
     {
-        $url = 'https://www.zarinpal.com/pg/StartPay/'.$this->_authority;
+        if($this->testing){
+            $url = 'https://sandbox.zarinpal.com/pg/StartPay/'. $this->_authority;
+        }else{
+            $url = 'https://www.zarinpal.com/pg/StartPay/'.$this->_authority;
+        }
         $url .=  ($zaringate) ? '/ZarinGate' : '';
 
         return $url;
