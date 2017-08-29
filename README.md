@@ -26,7 +26,8 @@ Add the following code to your ``common/config/main.php`` ``components``
         'zarinpal' => [
             'class' => 'amirasaran\zarinpal\Zarinpal',
             'merchant_id' => 'XXXXXXX-XXX-XXXX-XXXXXXXXXXXX',
-            'callback_url' => 'http://site.com/payment/verify'
+            'callback_url' => 'http://site.com/payment/verify',
+            'testing' => true, // if you are testing zarinpal set it true, else set to false
         ],
         .... 
     ]
