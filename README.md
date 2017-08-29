@@ -49,7 +49,10 @@ public function actionRequest()
 {
     /** @var Zarinpal $zarinpal */
     $zarinpal = Yii::$app->zarinpal ;
-    if($zarinpal->request(100,'Test Payment description')->getStatus() == '100'){
+    /*
+    * if you whant, you can pass $callbackParams as array to request method for additional params send to your callback url
+    */
+    if($zarinpal->request(100,'Test Payment description',null,null,['parameter'=>'value','parameter2'=>'value2'])->getStatus() == '100'){
         /*
         * You can save your payment request data to the database in here before rediract user
         * to get authority code you can use $zarinpal->getAuthority()
@@ -59,8 +62,10 @@ public function actionRequest()
     echo "Error !";
 }
 
-
-public function actionVerify($Authority, $Status){
+/*
+* $parameter and $parameter2 are optional parameter that set in request method $callbackParams
+*/
+public function actionVerify($Authority, $Status , $parameter , $parameter2){
 
     if($Status != "OK")
         return ; //Payment canceled by user 
