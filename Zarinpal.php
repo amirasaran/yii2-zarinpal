@@ -14,8 +14,21 @@ class Zarinpal extends Model
     private $_authority;
     private $_ref_id;
 
-    public function request($amount, $description, $email = null, $mobile = null)
+    public function request($amount, $description, $email = null, $mobile = null, $callbackParams = [])
     {
+        if(count($callbackParams) > 0){
+            $i = 0;
+            foreach ($callbackParams as $name => $value){
+                if($i == 0) {
+                    $this->callback_url .= '?';
+                }else{
+                    $this->callback_url .= '&';
+                }
+                $this->callback_url .= $name.'='.$value;
+                $i++;
+            }
+        }
+        
         if($this->testing){
             $client = new SoapClient('https://sandbox.zarinpal.com/pg/services/WebGate/wsdl', ['encoding' => 'UTF-8']);
         }else{
