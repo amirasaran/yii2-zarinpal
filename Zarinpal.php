@@ -78,6 +78,10 @@ class Zarinpal extends Model
         return $this->_status;
     }
 
+    public function getRefId() {
+        return $this->_ref_id;
+    }
+
     public function getRedirectUrl($zaringate = true)
     {
         if($this->testing){
